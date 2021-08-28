@@ -1,2 +1,4 @@
 /dataset
 /venv
+__pycache__
+libs/__pycache__
