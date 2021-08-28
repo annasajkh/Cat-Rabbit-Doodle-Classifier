@@ -15,6 +15,7 @@ my_font : pygame.font.Font = pygame.font.Font(pygame.font.get_default_font(), 20
 
 
 screen : Surface = display.set_mode((500,500))
+display.set_caption("cat rabbit classifier")
 screen.fill((0,0,0))
 
 while running:
@@ -32,12 +33,15 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             pressed = True
         elif event.type == pygame.MOUSEBUTTONUP:
-            screen.fill((0,0,0), rect=(50,0,80,50))
+            screen.fill((0,0,0), rect=(0,0,130,50))
             pressed = False
             image.save(screen, "input.png")
-
-            img : np.ndarray = np.array(Image.open("input.png").convert("L").resize((28, 28),Image.ANTIALIAS)).flatten() / 255
-
+            
+            img : np.ndarray = np.array(Image.open("input.png").convert("L").resize((28, 28),Image.ANTIALIAS)).flatten() 
+            
+            for i in range(len(img)):
+                img[i] = (255 if img[i] > 0 else 0) / 255
+            
             prediction = nn.forward(img)
 
             text_suf_cat = my_font.render(f"cat : {int(prediction[0] * 100)}%", False, (255, 255, 255))
@@ -50,6 +54,8 @@ while running:
 
     
     if pressed:
+        draw.circle(screen, (255,255,255), previous_mouse_pos,4)
+        draw.circle(screen, (255,255,255), mouse.get_pos(),4)
         draw.polygon(screen, (255, 255, 255), (previous_mouse_pos, mouse.get_pos()), 10)
 
     display.flip()
